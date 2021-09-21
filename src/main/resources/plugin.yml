@@ -1,0 +1,5 @@
+name: SkyWars
+version: '${project.version}'
+main: thelonebarkeeper.mgame.SkyWars
+authors: [ oofxFrozen ]
+description: hewp
