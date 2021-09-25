@@ -2,6 +2,7 @@ package thelonebarkeeper.mgame.data;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
+import thelonebarkeeper.mgame.SkyWars;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -14,22 +15,24 @@ public class DataManager {
 
     public static void sendStats() {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeUTF("Forward"); // So BungeeCord knows to forward it
+        out.writeUTF("Forward");
         out.writeUTF("hub");
-        out.writeUTF("BungeeCord"); // The channel name to check if this your data
+        out.writeUTF("BungeeCord");
 
         ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
         DataOutputStream msgout = new DataOutputStream(msgbytes);
 
         for (Data data : dataHashMap.values()) {
             try {
-                msgout.writeUTF(data.toString()); // You can do anything you want with msgout
+                msgout.writeUTF(data.toString());
             } catch (IOException exception) {
                 exception.printStackTrace();
             }
 
             out.writeShort(msgbytes.toByteArray().length);
             out.write(msgbytes.toByteArray());
+
+            SkyWars.getInstance().getServer().sendPluginMessage(SkyWars.getInstance(), "BungeeCord", out.toByteArray());
         }
     }
 

@@ -9,7 +9,7 @@ import thelonebarkeeper.mgame.listeners.RedirectConnection;
 
 import java.io.IOException;
 
-//TODO: main game mechanics, GameManager, cmd, map cfg
+//TODO: loot mechanics, HUB and ADMIN commands
 
 public final class SkyWars extends JavaPlugin {
 
