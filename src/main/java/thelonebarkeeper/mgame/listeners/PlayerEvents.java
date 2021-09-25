@@ -21,10 +21,10 @@ public class PlayerEvents implements Listener {
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
 
-        if (!(GameManager.getGame().getState() == GameState.RUN || GameManager.getGame().getState() == GameState.END)) {
-            if (!Objects.equals(player.getVelocity(), new Vector(0, 0, 0)))
-                player.teleport(player.getLocation().add(player.getVelocity().multiply(-1)));
-        }
+//        if (!(GameManager.getGame().getState() == GameState.RUN || GameManager.getGame().getState() == GameState.END)) {
+//            if (!Objects.equals(player.getVelocity(), new Vector(0, 0, 0)))
+//                player.teleport(player.getLocation().add(player.getVelocity().multiply(-1)));
+//        }
 
 
         if (player.getLocation().getBlockY() < 0) {

@@ -69,10 +69,7 @@ public class PlayerConnection implements Listener {
         GameManager.removePlayer(GameManager.getGamePlayer(player), true);
 
 
-        ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeUTF("Connect");
-        out.writeUTF("hub");
-        player.sendPluginMessage(SkyWars.getInstance(), "BungeeCord", out.toByteArray());
+        GameManager.playerToLobby(player);
 
         if (game.getState() == GameState.COUNTDOWN && game.getGamePlayers().size() < GameManager.getMap().getMinPlayers()) {
             GameManager.startTask.stopTimer();

@@ -16,7 +16,7 @@ public class DataManager {
     public static void sendStats() {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("Forward");
-        out.writeUTF("hub");
+        out.writeUTF("lobby");
         out.writeUTF("BungeeCord");
 
         ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();

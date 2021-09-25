@@ -14,17 +14,19 @@ public class HubCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player) || !command.getName().equalsIgnoreCase("hub"))
-            return false;
-        Player player = (Player) sender;
-
-        GameManager.removePlayer(GameManager.getGamePlayer(player), true);
-
-        ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeUTF("Connect");
-        out.writeUTF("hub");
-        player.sendPluginMessage(SkyWars.getInstance(), "BungeeCord", out.toByteArray());
-
+//        if (!(sender instanceof Player) || !command.getName().equalsIgnoreCase("hub"))
+//            return false;
+//        Player player = (Player) sender;
+//
+//        GameManager.removePlayer(GameManager.getGamePlayer(player), true);
+//
+//        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+//        out.writeUTF("Connect");
+//        out.writeUTF("hub");
+//        player.sendPluginMessage(SkyWars.getInstance(), "BungeeCord", out.toByteArray());
+//
+//        return false;
+//    }
         return false;
     }
 }

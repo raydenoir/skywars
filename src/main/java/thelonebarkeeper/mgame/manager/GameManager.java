@@ -48,8 +48,10 @@ public class GameManager {
     public static void removePlayer(GamePlayer player, boolean isLeft) {
         game.removePlayer(player);
         player.setSpectator();
-        if (isLeft)
+        if (isLeft) {
             player.setState(GamePlayerState.LEFT);
+            game.getGamePlayers().remove(player);
+        }
 
         if (game.getAlivePlayers().size() == 1) {
             endGame();
@@ -67,15 +69,12 @@ public class GameManager {
             player.playSound(player.getLocation(), Sound.ENTITY_ENDERDRAGON_DEATH, 0.2f, 1.2f);
             DataManager.sendStats();
         }
-        ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeUTF("Connect");
-        out.writeUTF("hub");
         Bukkit.getScheduler().runTaskLater(SkyWars.getInstance(), () -> {
             for (Player player : game.getPlayers()) {
-                player.sendPluginMessage(SkyWars.getInstance(), "BungeeCord", out.toByteArray());
+                playerToLobby(player);
             }
             Bukkit.getServer().unloadWorld("world", true);
-            Bukkit.getServer().reload();
+            Bukkit.getServer().shutdown();
         }, 200);
 
 
@@ -83,5 +82,12 @@ public class GameManager {
 
     public void startGame() {
         startTask.startTimer();
+    }
+
+    public static void playerToLobby(Player player) {
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF("Connect");
+        out.writeUTF("lobby");
+        player.sendPluginMessage(SkyWars.getInstance(), "BungeeCord", out.toByteArray());
     }
 }

@@ -2,6 +2,7 @@ package thelonebarkeeper.mgame.objects;
 
 import org.bukkit.entity.Player;
 import thelonebarkeeper.mgame.manager.GameManager;
+import thelonebarkeeper.mgame.tasks.GameStartTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +18,8 @@ public class Game {
     public Game() {
         for (String location : GameManager.getMap().getSpawnLocations())
             freeSpawn.put(location, true);
+
+        this.setState(GameState.PREPARATION);
     }
 
     public ArrayList<GamePlayer> getGamePlayers() {
@@ -36,7 +39,6 @@ public class Game {
     }
 
     public void removePlayer(GamePlayer gamePlayer) {
-        gamePlayers.remove(gamePlayer);
         alivePlayers.remove(gamePlayer);
     }
 
