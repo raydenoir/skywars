@@ -1,11 +1,13 @@
 package thelonebarkeeper.mgame;
 
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import thelonebarkeeper.mgame.listeners.PlayerConnection;
 import thelonebarkeeper.mgame.listeners.PlayerEvents;
-import thelonebarkeeper.mgame.listeners.RedirectConnection;
 
 import java.io.IOException;
 
@@ -29,6 +31,8 @@ public final class SkyWars extends JavaPlugin {
             e.printStackTrace();
         }
         Bukkit.getWorld("world").setAutoSave(false);
+
+        Bukkit.getConsoleSender().sendMessage(getServer().getServerName());
     }
 
     @Override
@@ -44,15 +48,17 @@ public final class SkyWars extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerEvents(), this);
 
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-        getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new RedirectConnection());
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "SkyWarsConnect");
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "SkyWarsPingTrue");
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "SkyWarsPingFalse");
 
-//        Bukkit.getPluginCommand("end").setExecutor(new TestCommands());
-
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "PlayerData");
     }
 
     public void setupDirectories() {
-        if (instance.getDataFolder().mkdir())
+        if (this.getDataFolder().mkdir())
             Bukkit.getServer().getLogger().info("Plugin directories are successfully created.");
+
     }
 
     public void setupMapConfig() throws IOException {
@@ -72,5 +78,18 @@ public final class SkyWars extends JavaPlugin {
         config.options().copyDefaults(true);
         saveConfig();
 
+    }
+
+    public void pingBungee(Boolean bool) {
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+
+        out.writeUTF( "GameState," + getServer().getServerName() + "," + bool);
+
+        for (Player player : getServer().getOnlinePlayers()) {
+            if (player != null) {
+                player.sendPluginMessage(this, "SkyWarsConnect", out.toByteArray());
+                return;
+            }
+        }
     }
 }

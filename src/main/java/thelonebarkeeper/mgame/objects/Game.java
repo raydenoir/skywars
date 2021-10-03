@@ -1,16 +1,22 @@
 package thelonebarkeeper.mgame.objects;
 
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import thelonebarkeeper.mgame.manager.GameManager;
-import thelonebarkeeper.mgame.tasks.GameStartTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Objects;
 
 public class Game {
 
-    private ArrayList<GamePlayer> gamePlayers = new ArrayList<>();
-    private ArrayList<GamePlayer> alivePlayers = new ArrayList<>();
+    private HashSet<GamePlayer> gamePlayers = new HashSet<>();
+    private HashSet<GamePlayer> alivePlayers = new HashSet<>();
     private static GameState state;
     private static HashMap<String, Boolean> freeSpawn = new HashMap<>();
 
@@ -22,7 +28,7 @@ public class Game {
         this.setState(GameState.PREPARATION);
     }
 
-    public ArrayList<GamePlayer> getGamePlayers() {
+    public HashSet<GamePlayer> getGamePlayers() {
         return gamePlayers;
     }
 
@@ -34,17 +40,36 @@ public class Game {
         return players;
     }
 
-    public ArrayList<GamePlayer> getAlivePlayers() {
+    public HashSet<GamePlayer> getAliveGamePlayers() {
         return alivePlayers;
     }
 
-    public void removePlayer(GamePlayer gamePlayer) {
+    public HashSet<Player> getAlivePlayers() {
+        HashSet<Player> players = new HashSet<>();
+        for (GamePlayer gamePlayer : alivePlayers) {
+            players.add(gamePlayer.getPlayer());
+        }
+        return players;
+    }
+
+    public void killPlayer(GamePlayer gamePlayer) {
         alivePlayers.remove(gamePlayer);
+        gamePlayer.setSpectator();
+        gamePlayer.getPlayer().teleport(gamePlayer.getPlayer().getWorld().getSpawnLocation().add(0, 30, 0));
     }
 
     public GamePlayer findGamePlayer(Player player) {
         for (GamePlayer gamePlayer : gamePlayers) {
             if (gamePlayer.getPlayer() == player) {
+                return gamePlayer;
+            }
+        }
+        return null;
+    }
+
+    public GamePlayer findGamePlayer(String playerName) {
+        for (GamePlayer gamePlayer : gamePlayers) {
+            if (Objects.equals(gamePlayer.getName(), playerName)) {
                 return gamePlayer;
             }
         }
@@ -59,9 +84,13 @@ public class Game {
         Game.state = state;
     }
 
-    public void addPlayer(GamePlayer player) {
+    public void spawnPlayer(GamePlayer player) {
+        Player actualPlayer = player.getPlayer();
         gamePlayers.add(player);
         alivePlayers.add(player);
+        actualPlayer.setGameMode(GameMode.ADVENTURE);
+        actualPlayer.getInventory().clear();
+        actualPlayer.setHealth(actualPlayer.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
     }
 
     public String getFreeLocation() {
@@ -72,6 +101,11 @@ public class Game {
             }
         }
         return null;
+    }
+
+    public void openLocation(Location location) {
+        String loc = location.getBlockX() + "," + location.getBlockY() + "," + location.getBlockZ();
+        freeSpawn.put(loc, true);
     }
 }
 
