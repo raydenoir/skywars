@@ -32,18 +32,19 @@ public class GameStartTask {
         task = scheduler.runTaskTimer(SkyWars.getInstance(), () -> {
             if(time == 0) {
                 stopTimer();
+
                 Bukkit.broadcastMessage(ChatColor.BOLD + "Игра началась!");
+
                 SkyWars.getInstance().pingBungee(false);
 
                 GameManager.getGame().setState(GameState.RUN);
-                InventoryManager invManager = new InventoryManager();
 
                 for (GamePlayer player : GameManager.getGame().getGamePlayers()) {
                     Player actualPlayer = player.getPlayer();
                     actualPlayer.playSound(actualPlayer.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.3f, 1.5f);
                     actualPlayer.setGameMode(GameMode.SURVIVAL);
 
-                    invManager.setupPlayerInventory(player);
+                    InventoryManager.setupInventory(player);
                 }
                 return;
             }

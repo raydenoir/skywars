@@ -1,12 +1,11 @@
 package thelonebarkeeper.mgame.objects;
 
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import thelonebarkeeper.mgame.manager.GameManager;
+import thelonebarkeeper.mgame.manager.InventoryManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -89,7 +88,7 @@ public class Game {
         gamePlayers.add(player);
         alivePlayers.add(player);
         actualPlayer.setGameMode(GameMode.ADVENTURE);
-        actualPlayer.getInventory().clear();
+        InventoryManager.setupStartInventory(player);
         actualPlayer.setHealth(actualPlayer.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
     }
 

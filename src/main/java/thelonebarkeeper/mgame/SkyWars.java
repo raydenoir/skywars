@@ -11,7 +11,7 @@ import thelonebarkeeper.mgame.listeners.PlayerEvents;
 
 import java.io.IOException;
 
-//TODO: loot mechanics, HUB and ADMIN commands
+//TODO: loot mechanics, ADMIN commands
 
 public final class SkyWars extends JavaPlugin {
 
@@ -49,10 +49,7 @@ public final class SkyWars extends JavaPlugin {
 
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         getServer().getMessenger().registerOutgoingPluginChannel(this, "SkyWarsConnect");
-        getServer().getMessenger().registerOutgoingPluginChannel(this, "SkyWarsPingTrue");
-        getServer().getMessenger().registerOutgoingPluginChannel(this, "SkyWarsPingFalse");
-
-        getServer().getMessenger().registerOutgoingPluginChannel(this, "PlayerData");
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "SkyWarsData");
     }
 
     public void setupDirectories() {

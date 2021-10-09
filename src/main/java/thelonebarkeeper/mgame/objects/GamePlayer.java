@@ -13,6 +13,7 @@ public class GamePlayer {
     private GameTeam team;
     private GamePlayerState gamePlayerState;
     private Location spawnLocation;
+    private GameClass gameClass;
 
 //    public GamePlayer(Player player, GameTeam gameTeam) {
 //        this.player = player;
@@ -60,6 +61,14 @@ public class GamePlayer {
 
     public String getName() {
         return name;
+    }
+
+    public GameClass getGameClass() {
+        return gameClass;
+    }
+
+    public void setGameClass(GameClass gameClass) {
+        this.gameClass = gameClass;
     }
 }
 

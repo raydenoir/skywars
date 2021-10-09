@@ -8,9 +8,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitScheduler;
 import thelonebarkeeper.mgame.SkyWars;
 import thelonebarkeeper.mgame.data.DataManager;
+import thelonebarkeeper.mgame.data.DataType;
 import thelonebarkeeper.mgame.manager.GameManager;
+import thelonebarkeeper.mgame.manager.InventoryManager;
 import thelonebarkeeper.mgame.objects.Game;
 import thelonebarkeeper.mgame.objects.GamePlayer;
 import thelonebarkeeper.mgame.objects.GameState;
@@ -21,33 +24,61 @@ public class PlayerConnection implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         event.setJoinMessage("");
 
-        Bukkit.getScheduler().runTaskLater(SkyWars.getInstance(), () -> {
-            Player player = event.getPlayer();
+        setupPlayer(event.getPlayer());
 
-            //In case if game has started while the player was trying to connect.
-            if (GameManager.getGame().getState() == GameState.RUN) {
-                player.sendMessage(ChatColor.BOLD + "Похоже, игра уже началась :/");
-                GameManager.playerToLobby(player);
-                return;
-            }
-
-            Location spawnLocation = getFreeLocation(player);
-            player.teleport(spawnLocation);
-            GameManager.addPlayer(new GamePlayer(player,spawnLocation));
-            DataManager.setupPlayerData(player);
-
-            for (Player onlinePlayer : Bukkit.getServer().getOnlinePlayers()) {
-                onlinePlayer.sendMessage(ChatColor.BOLD + event.getPlayer().getName() + " присоединился (-ась) к игре. ("
-                        + GameManager.getGame().getPlayers().size()
-                        + "/" + GameManager.getMap().getMaxPlayers() + ")");
-            }
-
-
-        }, 20L);
+//        Bukkit.getScheduler().runTaskLater(SkyWars.getInstance(), () -> {
+//            Player player = event.getPlayer();
+//
+//            //In case if game has started while the player was trying to connect.
+//            if (GameManager.getGame().getState() == GameState.RUN) {
+//                player.sendMessage(ChatColor.BOLD + "Похоже, игра уже началась :/");
+//                GameManager.playerToLobby(player);
+//                return;
+//            }
+//
+//            Location spawnLocation = getFreeLocation(player);
+//            player.teleport(spawnLocation);
+//            GameManager.addPlayer(new GamePlayer(player,spawnLocation));
+//
+//            for (Player onlinePlayer : Bukkit.getServer().getOnlinePlayers()) {
+//                onlinePlayer.sendMessage(ChatColor.BOLD + event.getPlayer().getName() + " присоединился (-ась) к игре. ("
+//                        + GameManager.getGame().getPlayers().size()
+//                        + "/" + GameManager.getMap().getMaxPlayers() + ")");
+//            }
+//
+//
+//        }, 20L);
 
         if (Bukkit.getServer().getOnlinePlayers().size() == GameManager.getMap().getMinPlayers()) {
             GameManager.startGame();
         }
+    }
+
+    BukkitScheduler scheduler = Bukkit.getScheduler();
+    public void setupPlayer(Player player) {
+        if (player == null) {
+            scheduler.runTaskLater(SkyWars.getInstance(), () -> setupPlayer(player), 1);
+            return;
+        }
+
+        //In case if game has started while the player was trying to connect.
+        if (GameManager.getGame().getState() == GameState.RUN) {
+            player.sendMessage(ChatColor.BOLD + "Похоже, игра уже началась :/");
+            GameManager.playerToLobby(player);
+            return;
+        }
+
+        Location spawnLocation = getFreeLocation(player);
+        player.teleport(spawnLocation);
+        GameManager.addPlayer(new GamePlayer(player, spawnLocation));
+
+        for (Player onlinePlayer : Bukkit.getServer().getOnlinePlayers()) {
+            onlinePlayer.sendMessage(ChatColor.BOLD + player.getName() + " присоединился (-ась) к игре. ("
+                    + GameManager.getGame().getPlayers().size()
+                    + "/" + GameManager.getMap().getMaxPlayers() + ")");
+        }
+
+
     }
 
     @EventHandler
@@ -56,6 +87,9 @@ public class PlayerConnection implements Listener {
         String playerName = event.getPlayer().getName();
         GamePlayer gamePlayer = GameManager.getGamePlayer(playerName);
         Game game = GameManager.getGame();
+
+        if (game.getState() == GameState.RUN || game.getState() == GameState.END)
+            DataManager.sendStat(DataType.GAME, playerName);
 
         // If player is spectating, just return.
         if (!game.getAliveGamePlayers().contains(gamePlayer))
@@ -70,7 +104,7 @@ public class PlayerConnection implements Listener {
             return;
         }
 
-        Location spawnLocation = gamePlayer.getSpawnLocation().add(-0.5, 1, -0.5);
+        Location spawnLocation = gamePlayer.getSpawnLocation().add(-0.5, 0, -0.5);
         game.openLocation(spawnLocation);
 
         //If countdown is running, stop it.

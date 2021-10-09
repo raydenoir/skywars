@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import thelonebarkeeper.mgame.SkyWars;
 import thelonebarkeeper.mgame.data.DataManager;
+import thelonebarkeeper.mgame.data.DataType;
 import thelonebarkeeper.mgame.objects.*;
 import thelonebarkeeper.mgame.tasks.GameStartTask;
 
@@ -62,19 +63,21 @@ public class GameManager {
     public static void endGame() {
         Game game = GameManager.getGame();
         GamePlayer winner = (GamePlayer) game.getAliveGamePlayers().toArray()[0];
+
         for (Player player : game.getPlayers()) {
             player.sendMessage(ChatColor.BOLD + String.format("%s победил!", winner.getPlayer().getName()));
-            DataManager.dataHashMap.get(player.getName()).setWinner();
             player.playSound(player.getLocation(), Sound.ENTITY_ENDERDRAGON_DEATH, 0.2f, 1.2f);
-            DataManager.sendStats();
+
+            DataManager.sendStat(DataType.WIN, winner.getName());
         }
+
         Bukkit.getScheduler().runTaskLater(SkyWars.getInstance(), () -> {
             for (Player player : game.getPlayers()) {
                 playerToLobby(player);
             }
         }, 100);
         Bukkit.getScheduler().runTaskLater(SkyWars.getInstance(), () -> {
-            Bukkit.getServer().unloadWorld("world", true);
+            Bukkit.getServer().unloadWorld("world", false);
             Bukkit.getServer().shutdown();
         }, 200);
 
