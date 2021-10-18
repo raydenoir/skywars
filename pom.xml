@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>thelonebarkeeper</groupId>
-    <artifactId>mgame</artifactId>
-    <version>1.0-snapshot</version>
+    <artifactId>SkyWars</artifactId>
+    <version>1.0</version>
     <packaging>jar</packaging>
 
     <name>SkyWars</name>

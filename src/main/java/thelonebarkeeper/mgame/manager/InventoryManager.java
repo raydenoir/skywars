@@ -27,7 +27,8 @@ public class InventoryManager {
         Player actualPlayer = player.getPlayer();
         actualPlayer.getInventory().clear();
 
-        actualPlayer.getInventory().setContents(player.getGameClass().getInventory());
+        if (player.getGameClass() != null)
+            actualPlayer.getInventory().setContents(player.getGameClass().getInventory());
     }
 
     public static void setupStartInventory(GamePlayer player) {

@@ -3,11 +3,13 @@ package thelonebarkeeper.mgame;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import thelonebarkeeper.mgame.listeners.PlayerConnection;
 import thelonebarkeeper.mgame.listeners.PlayerEvents;
+import thelonebarkeeper.mgame.manager.GameManager;
 
 import java.io.IOException;
 
@@ -30,7 +32,11 @@ public final class SkyWars extends JavaPlugin {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Bukkit.getWorld("world").setAutoSave(false);
+
+
+        for (World world : Bukkit.getWorlds()) {
+            world.setAutoSave(false);
+        }
 
         Bukkit.getConsoleSender().sendMessage(getServer().getServerName());
     }
@@ -80,7 +86,7 @@ public final class SkyWars extends JavaPlugin {
     public void pingBungee(Boolean bool) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
 
-        out.writeUTF( "GameState," + getServer().getServerName() + "," + bool);
+        out.writeUTF( "GameState," + GameManager.getMap().getName() + "," + bool);
 
         for (Player player : getServer().getOnlinePlayers()) {
             if (player != null) {

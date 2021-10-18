@@ -3,6 +3,7 @@ package thelonebarkeeper.mgame.listeners;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,7 +14,6 @@ import thelonebarkeeper.mgame.SkyWars;
 import thelonebarkeeper.mgame.data.DataManager;
 import thelonebarkeeper.mgame.data.DataType;
 import thelonebarkeeper.mgame.manager.GameManager;
-import thelonebarkeeper.mgame.manager.InventoryManager;
 import thelonebarkeeper.mgame.objects.Game;
 import thelonebarkeeper.mgame.objects.GamePlayer;
 import thelonebarkeeper.mgame.objects.GameState;
@@ -62,8 +62,9 @@ public class PlayerConnection implements Listener {
         }
 
         //In case if game has started while the player was trying to connect.
-        if (GameManager.getGame().getState() == GameState.RUN) {
-            player.sendMessage(ChatColor.BOLD + "Похоже, игра уже началась :/");
+        GameState state = GameManager.getGame().getState();
+        if (state == GameState.RUN || state == GameState.END) {
+            player.sendMessage(ChatColor.BOLD + "");
             GameManager.playerToLobby(player);
             return;
         }
@@ -96,6 +97,14 @@ public class PlayerConnection implements Listener {
             return;
 
         GameManager.removePlayer(gamePlayer, true);
+
+        //If game is ending to prevent people joining.
+        if (game.getState() == GameState.END && Bukkit.getServer().getOnlinePlayers().size() == 0) {
+            for (World world : Bukkit.getWorlds())
+                Bukkit.getServer().unloadWorld(world, false);
+
+            Bukkit.getScheduler().runTaskLater(SkyWars.getInstance(), () -> Bukkit.getServer().shutdown(), 100);
+        }
 
         //If game is going rn, change Event#eventMessage to the appropriate
         if (game.getState() == GameState.RUN || game.getState() == GameState.END) {

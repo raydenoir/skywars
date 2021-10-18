@@ -5,6 +5,7 @@ import com.google.common.io.ByteStreams;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import thelonebarkeeper.mgame.SkyWars;
@@ -75,9 +76,10 @@ public class GameManager {
             for (Player player : game.getPlayers()) {
                 playerToLobby(player);
             }
+            for (World world : Bukkit.getWorlds())
+                Bukkit.getServer().unloadWorld(world, false);
         }, 100);
         Bukkit.getScheduler().runTaskLater(SkyWars.getInstance(), () -> {
-            Bukkit.getServer().unloadWorld("world", false);
             Bukkit.getServer().shutdown();
         }, 200);
 
@@ -95,7 +97,7 @@ public class GameManager {
     public static void playerToLobby(Player player) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("Connect");
-        out.writeUTF("skywars-lobby");
+        out.writeUTF("SW-LOBBY");
         player.sendPluginMessage(SkyWars.getInstance(), "BungeeCord", out.toByteArray());
     }
 }

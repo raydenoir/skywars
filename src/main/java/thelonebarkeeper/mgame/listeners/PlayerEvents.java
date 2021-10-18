@@ -30,7 +30,6 @@ import thelonebarkeeper.mgame.objects.GameClass;
 import thelonebarkeeper.mgame.objects.GamePlayer;
 import thelonebarkeeper.mgame.objects.GameState;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -59,7 +58,7 @@ public class PlayerEvents implements Listener {
         if (lastDamage.get(player).getName() != null)
             DataManager.sendStat(DataType.KILL, lastDamage.get(player).getName());
 
-        if (GameManager.getGame().getState() == GameState.RUN) {
+        if (GameManager.getGame().getAlivePlayers().size() != 1) {
             if (lastDamage.get(player) == null) {
                 for (Player inGamePlayer : Bukkit.getServer().getOnlinePlayers()) {
                     inGamePlayer.sendMessage(ChatColor.BOLD + String.format("%s умер (-ла).", player.getName()));

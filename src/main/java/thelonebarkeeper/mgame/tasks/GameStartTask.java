@@ -39,12 +39,13 @@ public class GameStartTask {
 
                 GameManager.getGame().setState(GameState.RUN);
 
-                for (GamePlayer player : GameManager.getGame().getGamePlayers()) {
-                    Player actualPlayer = player.getPlayer();
-                    actualPlayer.playSound(actualPlayer.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.3f, 1.5f);
-                    actualPlayer.setGameMode(GameMode.SURVIVAL);
+                for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+                    GamePlayer gamePlayer = GameManager.getGamePlayer(player.getName());
+                    player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.3f, 1.5f);
+                    player.setGameMode(GameMode.SURVIVAL);
+                    player.getInventory().clear();
 
-                    InventoryManager.setupInventory(player);
+                    InventoryManager.setupInventory(gamePlayer);
                 }
                 return;
             }

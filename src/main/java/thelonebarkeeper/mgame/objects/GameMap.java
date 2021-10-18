@@ -1,10 +1,8 @@
 package thelonebarkeeper.mgame.objects;
 
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.util.Vector;
 import thelonebarkeeper.mgame.SkyWars;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class GameMap {
