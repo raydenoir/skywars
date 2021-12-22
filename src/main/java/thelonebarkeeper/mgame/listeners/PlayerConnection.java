@@ -106,6 +106,14 @@ public class PlayerConnection implements Listener {
 
         GameManager.removePlayer(gamePlayer, true);
 
+        //If game is ending to prevent people joining.
+        if (game.getState() == GameState.END && Bukkit.getServer().getOnlinePlayers().size() == 0) {
+            for (World world : Bukkit.getWorlds())
+                Bukkit.getServer().unloadWorld(world, false);
+
+            Bukkit.getScheduler().runTaskLater(SkyWars.getInstance(), () -> Bukkit.getServer().shutdown(), 100);
+        }
+
         //If game is going rn, change Event#eventMessage to the appropriate
         if (game.getState() == GameState.RUN || game.getState() == GameState.END) {
             int alivePlayers = GameManager.getGame().getAliveGamePlayers().size();
