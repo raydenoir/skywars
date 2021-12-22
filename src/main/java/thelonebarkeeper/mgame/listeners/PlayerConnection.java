@@ -89,6 +89,14 @@ public class PlayerConnection implements Listener {
         GamePlayer gamePlayer = GameManager.getGamePlayer(playerName);
         Game game = GameManager.getGame();
 
+        //If game is ending to prevent people joining.
+        if (game.getState() == GameState.END && Bukkit.getServer().getOnlinePlayers().size() == 0) {
+            for (World world : Bukkit.getWorlds())
+                Bukkit.getServer().unloadWorld(world, false);
+
+            Bukkit.getScheduler().runTaskLater(SkyWars.getInstance(), () -> Bukkit.getServer().shutdown(), 50);
+        }
+
         if (game.getState() == GameState.RUN || game.getState() == GameState.END)
             DataManager.sendStat(DataType.GAME, playerName);
 
@@ -97,14 +105,6 @@ public class PlayerConnection implements Listener {
             return;
 
         GameManager.removePlayer(gamePlayer, true);
-
-        //If game is ending to prevent people joining.
-        if (game.getState() == GameState.END && Bukkit.getServer().getOnlinePlayers().size() == 0) {
-            for (World world : Bukkit.getWorlds())
-                Bukkit.getServer().unloadWorld(world, false);
-
-            Bukkit.getScheduler().runTaskLater(SkyWars.getInstance(), () -> Bukkit.getServer().shutdown(), 100);
-        }
 
         //If game is going rn, change Event#eventMessage to the appropriate
         if (game.getState() == GameState.RUN || game.getState() == GameState.END) {
